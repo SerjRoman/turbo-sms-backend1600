@@ -6,4 +6,6 @@ export const env = cleanEnv(process.env, {
 	PORT: num({ default: 8000 }),
 	HOST: str({ default: "localhost" }),
 	DATABASE_URL: str(),
+	SECRET_KEY: str(),
+	TOKEN_TTL: str({ default: "7d" }),
 });

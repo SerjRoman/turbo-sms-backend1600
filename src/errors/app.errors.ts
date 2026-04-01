@@ -6,13 +6,13 @@
  *                                   свойства и методы от встроенного класса `Error` (такие как `message` и `stack`).
  */
 export class AppError extends Error {
-    // `public readonly statusCode: number;` - это синтаксис TypeScript.
+	// `public readonly statusCode: number;` - это синтаксис TypeScript.
 	// `public`: свойство доступно извне класса.
 	// `readonly`: значение свойства можно установить только в конструкторе, его нельзя изменить позже.
 	// `statusCode`: имя свойства.
 	// `number`: тип данных для этого свойства.
 	public readonly statusCode: number;
-    /**
+	/**
 	 * `constructor` - это специальный метод для создания и инициализации объекта,
 	 * созданного с помощью класса. Он вызывается автоматически при использовании `new AppError(...)`.
 	 *
@@ -38,6 +38,16 @@ export class NotFoundError extends AppError {
 export class ConflictError extends AppError {
 	constructor(resourceName: string) {
 		super(`${resourceName} already exists`, 409);
+	}
+}
+export class ValidationError extends AppError {
+	constructor(message: string = "Validation Error") {
+		super(message, 422);
+	}
+}
+export class AuthenticationError extends AppError {
+	constructor(message: string = "Authentication Error") {
+		super(message, 401);
 	}
 }
 

@@ -3,7 +3,7 @@ model User {
   name          String
   surname       String
   avatar        String
-  lastSeenAt    DateTime
+  lastSeenAt    DateTime          @default(now())
   password      String
   username      String            @unique
   email         String            @unique
