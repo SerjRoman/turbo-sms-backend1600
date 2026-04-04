@@ -1,6 +1,3 @@
-// export const userService: = {
-//     async
-// }
 import { StringValue } from "ms";
 import { compare, hash } from "bcryptjs";
 import {
