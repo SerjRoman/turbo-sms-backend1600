@@ -1,12 +1,24 @@
-// import {Router} from 'express'
-// import { authenticateMiddleware } from '../../middlewares/authenticate.middleware';
-// import { validateMiddleware } from '../../middlewares/validate.middleware';
-// import {ContactController} from "./contract.controller"
-// import{createContactSchema} from "./contract.schema"
+import { Router } from "express";
+import { ContactController } from "./contact.controller";
+import { validateMiddleware } from "../../middlewares/validate.middleware";
+import { createContactSchema } from "./contact.schema";
+// import {
+//     processImageMiddleware,
+//     uploadMiddleware,
+// } from "../../middlewares/upload.middleware";
+import { authenticateMiddleware } from "../../middlewares/authenticate.middleware";
 
+export const ContactRoutes = Router();
 
-// export const contactRoutes = Router()
+ContactRoutes.get("/", authenticateMiddleware, ContactController.getAllContactsByOwner);
 
-// contactRouter.get('/getContacts', validateMiddleware, UserController.findAll)
-// contactRouter.get('/getContact/:userId', validateMiddleware, UserController.findOne)
-// contactRouter.post('/createContact', validateMiddleware(createContactSchema), UserController.create)
+ContactRoutes.get("/:id", authenticateMiddleware, ContactController.getContactById);
+
+ContactRoutes.post(
+    "/",
+    authenticateMiddleware,
+    // uploadMiddleware.single("avatar"),
+    // validateMiddleware(createContactSchema),
+    // processImageMiddleware(false, 300, 80),
+    ContactController.createContact,
+);
