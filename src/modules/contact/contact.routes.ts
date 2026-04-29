@@ -1,12 +1,12 @@
-// import {Router} from 'express'
-// import { authenticateMiddleware } from '../../middlewares/authenticate.middleware';
-// import { validateMiddleware } from '../../middlewares/validate.middleware';
-// import {ContactController} from "./contract.controller"
-// import{createContactSchema} from "./contract.schema"
+ import {Router} from 'express'
+ import { authenticateMiddleware } from '../../middlewares/authenticate.middleware';
+ import { validateMiddleware } from '../../middlewares/validate.middleware';
+import { ContactController } from './contact.controller';
+import { createContactSchema } from './contact.schema';
 
 
-// export const contactRoutes = Router()
+ export const contactRoutes = Router()
 
-// contactRouter.get('/getContacts', validateMiddleware, UserController.findAll)
-// contactRouter.get('/getContact/:userId', validateMiddleware, UserController.findOne)
-// contactRouter.post('/createContact', validateMiddleware(createContactSchema), UserController.create)
+ contactRoutes.get('/getContacts', validateMiddleware, ContactController.getAll)
+contactRoutes.get('/getContact/:userId', validateMiddleware, ContactController.getContactById)
+ contactRoutes.post('/createContact', validateMiddleware(createContactSchema), ContactController.createContact)
