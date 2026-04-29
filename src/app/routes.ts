@@ -3,11 +3,14 @@ import {
 	processImageMiddleware,
 	uploadMiddleware,
 } from "../middlewares/upload.middleware";
+import { authenticateMiddleware } from "../middlewares/authenticate.middleware";
 import { UserRoutes } from "../modules/user/user.routes";
+import { contactRoutes } from "../modules/contact/contact.routes";
 
 export const appRoutes = Router();
 
 appRoutes.use("/users/", UserRoutes);
+appRoutes.use("/contacts", authenticateMiddleware, contactRoutes);
 
 appRoutes.get("/health", (req, res) => {
 	res.json({
@@ -27,11 +30,9 @@ appRoutes.post(
 	},
 );
 
-// appRoutes.use("/contacts", authenticateMiddleware, ContactRoutes);
-
-// appRoutes.use("*", (req, res) => {
-// 	res.status(404).json({
-// 		message: "Not Found",
-// 		error: "404",
-// 	});
-// });
+appRoutes.use("*", (req, res) => {
+	res.status(404).json({
+		message: "Not Found",
+		error: "404",
+	});
+});
