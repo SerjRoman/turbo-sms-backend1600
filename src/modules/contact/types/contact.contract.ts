@@ -1,32 +1,36 @@
-// import { Contact, CreateContact } from "./contact.types";
-// import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
+import type {
+    Contact,
+    CreateContactDto,
+} from "./contact.types";
+import { AuthenticatedUser } from "../../../types/token.types";
 
-// export interface ContactControllerContract {
-// 	getAll(
-// 		req: Request<object, Contact[], object, object>,
-// 		res: Response<Contact[]>,
-// 		next: NextFunction,
-// 	): Promise<void>;
-// 	getContactById(
-// 		req: Request<{ id: number }, Contact, object, object>,
-// 		res: Response<Contact>,
-// 		next: NextFunction,
-// 	): Promise<void>;
-// 	createContact(
-// 		req: Request<object, Contact, { data: CreateContact }, object>,
-// 		res: Response<Contact>,
-// 		next: NextFunction,
-// 	): Promise<void>;
-// }
+export interface ContactServiceContract {
+    getAllContactsByOwner: (ownerId: number) => Promise<Contact[]>;
+    getContacfById: (contactId: number) => Promise<Contact>;
+    createContact: (data: CreateContactDto) => Promise<Contact>;
+}
 
-// export interface ContactRepositoryContract {
-// 	findAll(ownerId: number): Promise<Contact[]>;
-// 	findById(id: number): Promise<Contact | null>;
-// 	create(data: CreateContact): Promise<Contact>;
-// }
+export interface ContactRepositoryContract {
+    getAllContactsByOwnerId: (ownerId: number) => Promise<Contact[]>;
+    getContactById: (contactId: number) => Promise<Contact | null>;
+    createContact: (data: CreateContactDto) => Promise<Contact>;
+}
 
-// export interface ContactServiceContract {
-// 	findAll(ownerId: number): Promise<Contact[]>;
-// 	findById(id: number): Promise<Contact>;
-// 	create(data: CreateContact): Promise<Contact>;
-// }
+export interface ContactControllerContract {
+    getAllContacts: (
+        req: Request<object, Contact[]>,
+        res: Response<Contact[], AuthenticatedUser>,
+        next: NextFunction,
+    ) => void;
+    getContactById: (
+        req: Request<{ id: string }>,
+        res: Response<Contact, AuthenticatedUser>,
+        next: NextFunction,
+    ) => void;
+    createContact: (
+        req: Request<object, Contact, CreateContactDto>,
+        res: Response<Contact, AuthenticatedUser>,
+        next: NextFunction,
+    ) => void;
+}
