@@ -1,3 +1,4 @@
+import { PrismaClient, User } from '@prisma/client';
 import { UserRepositoryContract } from "./types/user.contracts";
 import type {
 	UserWithPassword,
@@ -7,6 +8,9 @@ import type {
 import { PrismaClient } from "../../prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { ValidationError, InternalServerError } from "../../errors/app.errors";
+
+
+const prisma = new PrismaClient();
 
 export const UserRepository: UserRepositoryContract = {
 	async findByEmailWithPassword(
@@ -144,3 +148,40 @@ export const UserRepository: UserRepositoryContract = {
 		}
 	},
 };
+
+
+export class UsersRepository {
+  async findByUsername(username: string): Promise<Omit<User, 'password'> | null> {
+    const user = await prisma.user.findUnique({
+      where: { username },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        avatar: true,
+        lastSeenAt: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+    
+    return user;
+  }
+  
+  async findById(id: number): Promise<Omit<User, 'password'> | null> {
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        avatar: true,
+        lastSeenAt: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+    
+    return user;
+  }
+}

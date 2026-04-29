@@ -9,6 +9,8 @@ import { UserServiceContract } from "./types/user.contracts";
 import { UserRepository } from "./user.repository";
 import { sign } from "jsonwebtoken";
 import { env } from "../../config/env";
+import { UsersRepository } from './users.repository';
+import { NotFoundError } from '../../errors/NotFoundError';
 
 export const UserService: UserServiceContract = {
 	async login(dto) {
@@ -58,3 +60,21 @@ export const UserService: UserServiceContract = {
 		return user;
 	},
 };
+
+export class UsersService {
+  private usersRepository: UsersRepository;
+  
+  constructor() {
+    this.usersRepository = new UsersRepository();
+  }
+  
+  async findUserByUsername(username: string) {
+    const user = await this.usersRepository.findByUsername(username);
+    
+    if (!user) {
+      throw new NotFoundError(`User with username "${username}" not found`);
+    }
+    
+    return user;
+  }
+}

@@ -24,3 +24,4 @@ UserRoutes.post(
 );
 UserRoutes.get("/me", authenticateMiddleware, UserController.me);
 UserRoutes.get("/:username", authenticateMiddleware, UserController.findByUsername)
+

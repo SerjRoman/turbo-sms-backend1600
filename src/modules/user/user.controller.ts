@@ -8,6 +8,8 @@ import {
 } from "./types/user.types";
 import { UserService } from "./user.service";
 import { ValidationError } from "../../errors/app.errors";
+import { Request, Response, NextFunction } from 'express';
+import { UsersService } from './users.service';
 
 export const UserController: UserControllerContract = {
 	login: async function (
@@ -63,3 +65,47 @@ export const UserController: UserControllerContract = {
 		}
 	},
 };
+
+id: async function (req, res, next) {
+	try {
+		if (!req.params.id) {
+			throw new ValidationError("No user ID provided!");
+		}
+		const user = await UserService.findById({
+			id: parseInt(req.params.id, 10),
+		});
+		res.status(200).json(user);
+	} catch (error) {
+		next(error);
+	}
+},
+
+export class UsersController {
+  private usersService: UsersService;
+  
+  constructor() {
+    this.usersService = new UsersService();
+  }
+  
+  findUserByUsername = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { username } = req.params;
+      
+      if (!username) {
+        return res.status(400).json({
+          status: 'error',
+          message: 'Username parameter is required',
+        });
+      }
+      
+      const user = await this.usersService.findUserByUsername(username);
+      
+      res.status(200).json({
+        status: 'success',
+        data: user,
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+}
