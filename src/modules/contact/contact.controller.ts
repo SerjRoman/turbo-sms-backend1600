@@ -1,35 +1,54 @@
-// import { Request, Response } from "express";
-// import { AuthenticatedUser } from "../../types/token.types"
-// import { ContactControllerContract } from "./types/contact.contract"
-// import { UserContact } from "./types/contact.types"
-// import { ContactService } from "./contact.service"
-
-// export const ContactController: ContactControllerContract = {
-//     async getAll(req, res, next){
-//         try {
-//             const contacts = await  ContactService.findAll(res.locals.id)
-//             res.status(200).json(contacts)
-//         } catch (error) {
-//             next(error)
-//         }
-//     },
-//     async getContactById(req, res, next){
-//         try {
-//             const contact = await ContactService.findOne(req.body.userId)
-//             res.status(200).json(contact)
-//         } catch (error) {
-//             next(error)
-//         }
-//     },
-//     async createContact( req, res, next){
-//         try {
-//             const createdContact = await ContactService.create(req.body.data)
-//             res.status(200).json(createdContact)
-//         } catch (error) {
-//             next(error)
-//         }
-//     }
-// }
+import { ContactControllerContract } from "./types/contact.contracts";
+import { ContactService } from "./contact.service";
+import { BadRequestError } from "../../errors/app.errors";
 
 
+export const ContactController: ContactControllerContract = {
+    getAllContactsByOwner: async function (
+        req, res, next
+    ) {
+        try {
+            const contacts = await ContactService.getAllContactsByOwner({
+                ownerId: res.locals.userId,
+            });
+            res.status(200).json(contacts);
+        } catch (error) {
+            next(error);
+        }
+    },
 
+    getContactById: async function (
+        req, res, next,
+    ) {
+        try {
+            if (!req.params.id) {
+                throw new BadRequestError("No id provided!");
+            }
+            const contact = await ContactService.getContactById({
+                id: +req.params.id,
+            });
+            res.status(200).json(contact);
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    createContact: async function (
+        req, res, next,
+    ) {
+        try {
+            const contactUserId = +req.body.contactUserId;
+            // const avatar: string | undefined = req.file?.filename;
+
+            const contact = await ContactService.createContact({
+                localName: req.body.localName as string,
+                // ...(avatar !== undefined && { avatar }),
+                contactUserId,
+                ownerId: res.locals.userId,
+            });
+            res.status(200).json(contact);
+        } catch (error) {
+            next(error);
+        }
+    },
+};
