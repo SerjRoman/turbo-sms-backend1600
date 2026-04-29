@@ -1,24 +1,28 @@
-// import { Prisma } from "../../../generated/prisma";
+import { Prisma } from "../../../generated/prisma";
 
-// export type Contact = Prisma.ContactGetPayload<{}>;
+export type Contact = Prisma.ContactGetPayload<{
+    include: {
+        contactUser: {
+            select: { id: true; username: true; lastSeenAt: true };
+        };
+    };
+}>;
 
-// export interface CreateContact {
-//     localName: string;
-//     contactOwnerId: number;
-//     contactUserId: number;
-//     avatar?: string;
-// }
+export type ContactPlain = Prisma.ContactGetPayload<{}>;
 
-// export interface UserContact {
-//     id: number,
-//     localName: string,
-//     avatar: string | undefined,
-//     ownerId: number;
-//     contactUser: {
-//         username: string, 
-//         surname: string,
-//         avatar: string | undefined,
-//     }
-//     createdAt: Date
-// }
+export type ContactCreateInput = Prisma.ContactUncheckedCreateInput;
 
+export type GetAllContactsDto = {
+    ownerId: number;
+};
+
+export type GetContactByIdDto = {
+    id: number;
+};
+
+export type CreateContactDto = {
+    localName: string;
+    avatar?: string;
+    contactUserId: number;
+    ownerId: number;
+};

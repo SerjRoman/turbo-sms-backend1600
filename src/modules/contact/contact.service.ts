@@ -1,41 +1,34 @@
-// import { ContactRepository } from "./contact.repository";
-// import { ContactsServiceContract } from "./types/contact.contracts";
-// import { NotFoundError } from "../../errors/app.errors";
-// import { CreateContact } from "./types/contact.types";
+import { NotFoundError } from "../../errors/app.errors";
+import { ContactServiceContract } from "./types/contact.contracts";
+import { ContactRepository } from "./contact.repository";
+import { UserRepository } from "../user/user.repository";
 
+export const ContactService: ContactServiceContract = {
+    async getAll({ ownerId }) {
+        return await ContactRepository.findAllByOwnerId(ownerId);
+    },
 
-// export const ContactService: ContactSetvo = {
-//     async getAll(userId: number){
-//         const contacts = await ContactRepository.findAll(userId)
-//         return contacts
-//     },
+    async getById({ id }) {
+        const contact = await ContactRepository.findById(id);
+        if (!contact) {
+            throw new NotFoundError("Contact");
+        }
+        return contact;
+    },
 
-//     async getContactById(id: number, ownerId: number){
-//         const contract = await ContractRepository.findById(id)
-//         if (!contact){
-//             throw new NotFoundError("Contact not found")
-//         }
-//         if (contact.contactOwnerId !== ownerId){
-//             throw new NotFoundError("Contact not found")
-//         }
-//         return contact
-//     }, 
+    async create(dto) {
+        let avatar = dto.avatar;
 
-//     async create(
-//         localName: string, 
-//         contractUserId: number,
-//         ownerId: number, 
-//         avatar?: string
-//     ){
-//         const data: CreateContact = {
-//             localName, 
-//             contactUserId,
-//             contactOwnerId: ownerId,
-//         }
-//         if (avatar){
-//             data.avatar = avatar
-//         }
-// 		const contact = await ContactRepository.create(data);
-// 		return contact;
-//     }
-// }
+        if (!avatar) {
+            const contactUser = await UserRepository.findById(dto.contactUserId);
+            avatar = contactUser.avatar ?? "";
+        }
+
+        return await ContactRepository.create({
+            localName: dto.localName,
+            avatar: avatar,
+            contactOwnerId: dto.ownerId,
+            contactUserId: dto.contactUserId,
+        });
+    },
+};

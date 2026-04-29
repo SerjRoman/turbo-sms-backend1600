@@ -4,10 +4,13 @@ import {
 	uploadMiddleware,
 } from "../middlewares/upload.middleware";
 import { UserRoutes } from "../modules/user/user.routes";
+import { ContactRoutes } from "../modules/contact/contact.routes";
+import { authenticateMiddleware } from "../middlewares/authenticate.middleware";
 
 export const appRoutes = Router();
 
-appRoutes.use("/users/", UserRoutes);
+appRoutes.use("/users", UserRoutes);
+appRoutes.use("/contacts", authenticateMiddleware, ContactRoutes);
 
 appRoutes.get("/health", (req, res) => {
 	res.json({
@@ -15,6 +18,7 @@ appRoutes.get("/health", (req, res) => {
 		timestamp: Date.now(),
 	});
 });
+
 appRoutes.post(
 	"/test-image-upload",
 	uploadMiddleware.single("image"),
@@ -26,8 +30,6 @@ appRoutes.post(
 		});
 	},
 );
-
-// appRoutes.use("/contacts", authenticateMiddleware, ContactRoutes);
 
 // appRoutes.use("*", (req, res) => {
 // 	res.status(404).json({
