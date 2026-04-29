@@ -15,6 +15,7 @@ export interface UserServiceContract {
 	login: (dto: LoginDto) => Promise<{ token: string }>;
 	register: (dto: RegisterDto) => Promise<{ token: string }>;
 	me: (dto: MeDTO) => Promise<User>;
+	findByUsername: (username: string) => Promise<User>;
 }
 export interface UserRepositoryContract {
 	findByEmailWithPassword: (
@@ -23,6 +24,7 @@ export interface UserRepositoryContract {
 	findByEmail: (email: string) => Promise<User | null>;
 	create: (data: UserCreateInput) => Promise<User>;
 	findById: (id: number) => Promise<User>;
+	findByUsername: (username: string) =>  Promise<User>
 }
 
 export interface UserControllerContract {
@@ -41,4 +43,10 @@ export interface UserControllerContract {
 		res: Response<User, AuthenticatedUser>,
 		next: NextFunction,
 	) => void;
+
+	findByUsername: (
+        req: Request<{ username: string }>,
+        res: Response<User>,
+        next: NextFunction,
+    ) => void;
 }

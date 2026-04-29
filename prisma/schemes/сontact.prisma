@@ -1,6 +1,6 @@
 model Contact {
   id             Int      @id @default(autoincrement())
-  localName      String
+  localName      String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   contactUser    User     @relation(fields: [contactUserId], references: [id], name: "ContactUserToUser")

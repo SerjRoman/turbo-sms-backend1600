@@ -50,4 +50,9 @@ export const UserService: UserServiceContract = {
 		}
 		return user;
 	},
+
+	async findByUsername(username) {
+		const findedUser = await UserRepository.findByUsername(username)
+		return findedUser
+	}
 };

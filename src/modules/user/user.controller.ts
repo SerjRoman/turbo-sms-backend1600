@@ -48,4 +48,14 @@ export const UserController: UserControllerContract = {
 			next(error);
 		}
 	},
+
+	async findByUsername(req, res, next) {
+		try {
+			const { username } = req.params;
+			const user = await UserService.findByUsername(username);
+			res.json(user);
+		} catch (error) {
+			next(error);
+		}
+	},
 };
