@@ -21,7 +21,7 @@ appRoutes.get("/health", (req, res) => {
 appRoutes.post(
 	"/test-image-upload",
 	uploadMiddleware.single("image"),
-	processImageMiddleware(true, 600),
+	processImageMiddleware(true, 600, 1),
 	(req, res) => {
 		res.json({
 			status: "success",
@@ -29,3 +29,12 @@ appRoutes.post(
 		});
 	},
 );
+
+// appRoutes.use("/contacts", authenticateMiddleware, ContactRoutes);
+
+// appRoutes.use("*", (req, res) => {
+// 	res.status(404).json({
+// 		message: "Not Found",
+// 		error: "404",
+// 	});
+// });

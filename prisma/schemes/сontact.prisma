@@ -1,10 +1,13 @@
 model Contact {
   id             Int      @id @default(autoincrement())
-  localName      String?
+  localName      String
+  avatar         String
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   contactUser    User     @relation(fields: [contactUserId], references: [id], name: "ContactUserToUser")
   contactUserId  Int
   contactOwner   User     @relation(fields: [contactOwnerId], references: [id], name: "ContactOwnerToUser")
   contactOwnerId Int
+
+  @@unique([contactOwnerId, contactUserId])
 }

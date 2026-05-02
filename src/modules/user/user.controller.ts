@@ -7,6 +7,7 @@ import {
 	User,
 } from "./types/user.types";
 import { UserService } from "./user.service";
+import { ValidationError } from "../../errors/app.errors";
 
 export const UserController: UserControllerContract = {
 	login: async function (
@@ -48,12 +49,15 @@ export const UserController: UserControllerContract = {
 			next(error);
 		}
 	},
-
-	async findByUsername(req, res, next) {
+	findByUsername: async function (req, res, next) {
 		try {
-			const { username } = req.params;
-			const user = await UserService.findByUsername(username);
-			res.json(user);
+			if (!req.params.username) {
+				throw new ValidationError("No username provided!");
+			}
+			const user = await UserService.findByUsername({
+				username: req.params.username,
+			});
+			res.status(200).json(user);
 		} catch (error) {
 			next(error);
 		}

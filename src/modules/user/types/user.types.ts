@@ -27,3 +27,4 @@ export type LoginDto = {
 
 export type LoginCredentials = InferType<typeof loginSchema>;
 export type RegisterCredentials = InferType<typeof regSchema>;
+export type FindByUsernameDto = { username: string };
