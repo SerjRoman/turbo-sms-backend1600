@@ -3,6 +3,7 @@ import { ContactService } from "./contact.service";
 import { ContactsControllerContract } from "./types/contact.contracts";
 import { Contact } from "./types/contact.types";
 import { BadRequestError, NotFoundError } from "../../errors/app.errors";
+import { createContactSchema } from "./contact.schema";
 
 export const ContactController: ContactsControllerContract = {
 	async getAll(
@@ -21,11 +22,18 @@ export const ContactController: ContactsControllerContract = {
 
 	async getContactById(req, res, next) {
 		try {
-			if (!req.params.id) throw new BadRequestError("Id is required"); 
+
 			const id = +req.params.id;
 			const ownerId = +res.locals.userId;
+
+			if (!id) {
+				throw new BadRequestError("Id is required")
+			}
+		
 			const contact = await ContactService.getContactById(id, ownerId);
-			if (!contact) throw new NotFoundError("Contact not found");
+			if (!contact) {
+				throw new NotFoundError("Contact not found")
+			}
 			res.json(contact);
 		} catch (error) {
 			next(error);
@@ -35,15 +43,18 @@ export const ContactController: ContactsControllerContract = {
 	async create(req, res, next) {
 		try {
 			const ownerId = +res.locals.userId;
-			const { localName, avatar, contactUserId } = req.body;
 
-			if (!contactUserId) throw new BadRequestError("contactUserId is required");
+			const validated = await createContactSchema.validate(req.body, {
+				abortEarly: false,
+				stripUnknown: true,
+			});
+
+			const { localName, contactUserId } = validated;
 
 			const contact = await ContactService.create(
-			localName,
-			+contactUserId,
-			ownerId,
-			avatar ?? undefined,
+				localName,
+				+contactUserId,
+				ownerId,
 			);
 			res.status(201).json(contact);
 		} catch (error) {
