@@ -6,7 +6,7 @@ import type {
 } from "./types/user.types";
 import { PrismaClient } from "../../prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
-import { ValidationError, InternalServerError } from "../../errors/app.errors";
+import { ValidationError, InternalServerError, NotFoundError } from "../../errors/app.errors";
 
 export const UserRepository: UserRepositoryContract = {
 	async findByEmailWithPassword(
@@ -94,7 +94,6 @@ export const UserRepository: UserRepositoryContract = {
 	},
 	async findById(id: number): Promise<User> {
 		try {
-			// Unsure if error handling will work without await
 			return await PrismaClient.user.findFirstOrThrow({
 				where: { id },
 				omit: {
@@ -103,11 +102,10 @@ export const UserRepository: UserRepositoryContract = {
 			});
 		} catch (error) {
 			if (error instanceof PrismaClientKnownRequestError) {
-				if (
-					["P2000", "P2005", "P2006", "P2007", "P2009"].includes(
-						error.code,
-					)
-				) {
+				if (error.code === "P2025") {
+					throw new NotFoundError("User not found");
+				}
+				if (["P2000", "P2005", "P2006", "P2007", "P2009"].includes(error.code)) {
 					console.log("Wrong query passed by user.");
 					throw new ValidationError("WRONG_QUERY");
 				}

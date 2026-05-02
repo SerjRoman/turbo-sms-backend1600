@@ -4,10 +4,13 @@ import {
 	uploadMiddleware,
 } from "../middlewares/upload.middleware";
 import { UserRoutes } from "../modules/user/user.routes";
+import { ContactRouter } from "../modules/contact/contact.routes";
 
 export const appRoutes = Router();
 
 appRoutes.use("/users/", UserRoutes);
+appRoutes.use("/contacts/", ContactRouter)
+
 
 appRoutes.get("/health", (req, res) => {
 	res.json({
