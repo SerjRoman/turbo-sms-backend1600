@@ -5,8 +5,19 @@ import { logMiddleware } from "../middlewares/log.middleware";
 import { errorHandlerMiddleware } from "../middlewares/error-handler.middleware";
 import { appRoutes } from "./routes";
 import { uploadDir } from "../config/path";
+import { createServer } from "node:http";
+import { SocketManager } from "../socket";
+import { authenticateSocketMiddleware } from "../middlewares/authenticate.middleware";
 
 const app = express();
+
+const httpServer = createServer(app);
+
+const socketManager = new SocketManager(httpServer);
+
+socketManager.useMiddleware(authenticateSocketMiddleware);
+
+socketManager.initConnection();
 
 app.use(cors());
 app.use(express.json());
@@ -17,6 +28,7 @@ app.use(appRoutes);
 
 app.use(errorHandlerMiddleware);
 
-app.listen(env.PORT, env.HOST, () => {
+httpServer.listen(env.PORT, env.HOST, () => {
 	console.log(`Server is started on: http://${env.HOST}:${env.PORT}`);
+	console.log(`WS Server is started on: ws://${env.HOST}:${env.PORT}`);
 });

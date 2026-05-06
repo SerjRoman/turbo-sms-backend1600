@@ -3,6 +3,7 @@ import { AuthenticationError } from "../errors/app.errors";
 import { TokenExpiredError, verify } from "jsonwebtoken";
 import { env } from "../config/env";
 import type { TokenPayload } from "../types/token.types";
+import { Socket } from "socket.io";
 /*
 
 Мидделваер ожидает JWT в headers: {Authrorization: "Bearer TOKEN"}
@@ -42,5 +43,40 @@ export function authenticateMiddleware(
 			return;
 		}
 		next(error);
+	}
+}
+
+export function authenticateSocketMiddleware(
+	socket: Socket,
+	next: (error?: Error) => void,
+) {
+	const authorization =
+		socket.handshake.auth.token || socket.handshake.headers.token;
+	if (!authorization) {
+		next(new AuthenticationError("No authorization provided!"));
+		return;
+	}
+	const [type, token] = authorization.split(" ");
+	if (type !== "Bearer" || !token) {
+		next(new AuthenticationError("Authorization is in wrong format!"));
+		return;
+	}
+	try {
+		const userData = verify(token, env.SECRET_KEY);
+		if (typeof userData === "string") {
+			next(new AuthenticationError("JWT is in wrong format!"));
+			return;
+		}
+		socket.data.userId = (userData as TokenPayload).id;
+		next();
+	} catch (error) {
+		if (error instanceof TokenExpiredError) {
+			next(new AuthenticationError("Token is expired."));
+			return;
+		}
+		if (error instanceof Error) {
+			next(error);
+		}
+		return;
 	}
 }
