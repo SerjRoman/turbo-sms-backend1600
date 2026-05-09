@@ -2,21 +2,35 @@
 
 import { Server as HttpServer } from "node:http";
 import { Socket, Server as SocketIOServer } from "socket.io";
-import { ClientSocket } from "./socket.types";
+import type {
+	ClientSocket,
+	Event,
+	EventAcknowledgement,
+	EventName,
+	EventPayload,
+	SocketManagerContract,
+} from "./socket.types";
 
-export class SocketManager {
+export class SocketManager implements SocketManagerContract {
 	private readonly ioServer: SocketIOServer;
+	private readonly events: Event<EventName>[];
 	constructor(httpServer: HttpServer) {
 		this.ioServer = new SocketIOServer(httpServer, {
 			cors: {
 				origin: "*",
 			},
 		});
+		this.events = [];
 	}
-	initConnection() {
+	initConnection(callback?: (socket: ClientSocket) => void) {
 		this.ioServer.on("connection", (socket: ClientSocket) => {
 			console.log("New client connected: ", socket.id);
-
+			callback?.(socket);
+			this.events.forEach((event) => {
+				socket.on(event.name as EventName, (data, ack) => {
+					event.callback(socket, data, ack);
+				});
+			});
 			socket.on("disconnect", () => {
 				console.log("Client disconnected: ", socket.id);
 			});
@@ -26,5 +40,15 @@ export class SocketManager {
 		middleware: (socket: Socket, next: (error?: Error) => void) => void,
 	) {
 		this.ioServer.use(middleware);
+	}
+	addEvent<K extends EventName>(
+		name: K,
+		callback: (
+			socket: ClientSocket,
+			payload: EventPayload<K>,
+			ack?: EventAcknowledgement<K>,
+		) => void,
+	) {
+		this.events.push({ name, callback });
 	}
 }

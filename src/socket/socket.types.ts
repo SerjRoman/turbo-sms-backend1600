@@ -3,11 +3,12 @@ import type {
 	Socket,
 	Server as SocketIOServer,
 } from "socket.io";
+import type { ChatClientEvents } from "../modules/chat/types/chat.types";
 
 // События, которые сервер может отправлять клиенту
 export type AppServerEvents = DefaultEventsMap;
 // События, которые клиент может отправлять серверу
-export type AppClientEvents = DefaultEventsMap;
+export type AppClientEvents = ChatClientEvents;
 
 export interface AuthenticatedSocket {
 	userId: number;
@@ -26,3 +27,35 @@ export type ServerSocket = SocketIOServer<
 	object,
 	AuthenticatedSocket
 >;
+
+export type EventName = keyof AppClientEvents;
+
+export type EventPayload<K extends EventName> = Parameters<
+	AppClientEvents[K]
+>[0];
+export type EventAcknowledgement<K extends EventName> = Parameters<
+	AppClientEvents[K]
+>[1];
+export interface Event<K extends EventName> {
+	name: string;
+	callback: (
+		socket: ClientSocket,
+		payload: EventPayload<K>,
+		ack?: EventAcknowledgement<K>,
+	) => void;
+}
+
+export interface SocketManagerContract {
+	initConnection(callback?: (socket: ClientSocket) => void): void;
+	useMiddleware(
+		middleware: (socket: Socket, next: (error?: Error) => void) => void,
+	): void;
+	addEvent<K extends EventName>(
+		name: K,
+		callback: (
+			socket: ClientSocket,
+			payload: EventPayload<K>,
+			ack?: EventAcknowledgement<K>,
+		) => void,
+	): void;
+}
