@@ -1,14 +1,14 @@
-import type {
-	DefaultEventsMap,
-	Socket,
-	Server as SocketIOServer,
-} from "socket.io";
+import type { Socket, Server as SocketIOServer } from "socket.io";
 import type { ChatClientEvents } from "../modules/chat/types/chat.types";
+import {
+	MessageClientEvents,
+	MessageServerEvents,
+} from "../modules/message/types/message.contracts";
 
 // События, которые сервер может отправлять клиенту
-export type AppServerEvents = DefaultEventsMap;
+export type AppServerEvents = MessageServerEvents;
 // События, которые клиент может отправлять серверу
-export type AppClientEvents = ChatClientEvents;
+export type AppClientEvents = ChatClientEvents & MessageClientEvents;
 
 export interface AuthenticatedSocket {
 	userId: number;
@@ -58,4 +58,8 @@ export interface SocketManagerContract {
 			ack?: EventAcknowledgement<K>,
 		) => void,
 	): void;
+}
+
+export interface SocketController {
+	registerHandlers: (socketManager: SocketManagerContract) => void;
 }
