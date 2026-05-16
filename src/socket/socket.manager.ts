@@ -12,10 +12,10 @@ import type {
 } from "./socket.types";
 
 export class SocketManager implements SocketManagerContract {
-	private readonly ioServer: SocketIOServer;
+	private readonly _ioServer: SocketIOServer;
 	private readonly events: Event<EventName>[];
 	constructor(httpServer: HttpServer) {
-		this.ioServer = new SocketIOServer(httpServer, {
+		this._ioServer = new SocketIOServer(httpServer, {
 			cors: {
 				origin: "*",
 			},
@@ -23,7 +23,7 @@ export class SocketManager implements SocketManagerContract {
 		this.events = [];
 	}
 	initConnection(callback?: (socket: ClientSocket) => void) {
-		this.ioServer.on("connection", (socket: ClientSocket) => {
+		this._ioServer.on("connection", (socket: ClientSocket) => {
 			console.log("New client connected: ", socket.id);
 			callback?.(socket);
 			this.events.forEach((event) => {
@@ -39,7 +39,7 @@ export class SocketManager implements SocketManagerContract {
 	useMiddleware(
 		middleware: (socket: Socket, next: (error?: Error) => void) => void,
 	) {
-		this.ioServer.use(middleware);
+		this._ioServer.use(middleware);
 	}
 	addEvent<K extends EventName>(
 		name: K,
@@ -50,5 +50,8 @@ export class SocketManager implements SocketManagerContract {
 		) => void,
 	) {
 		this.events.push({ name, callback });
+	}
+	get ioServer() {
+		return this._ioServer;
 	}
 }

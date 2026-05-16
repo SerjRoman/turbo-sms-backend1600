@@ -28,3 +28,15 @@ export type LoginDto = {
 export type LoginCredentials = InferType<typeof loginSchema>;
 export type RegisterCredentials = InferType<typeof regSchema>;
 export type FindByUsernameDto = { username: string };
+
+export type GetOnlineUsersPayload = {
+	userIds: number[];
+};
+export type GetOnlineUsersAcknowledgment = (response: { userIds: number[] }) => void;
+
+export interface UserClientEvents {
+	getOnlineUsers: (
+		payload: GetOnlineUsersPayload,
+		ack?: GetOnlineUsersAcknowledgment,
+	) => void;
+}

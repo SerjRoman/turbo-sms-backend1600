@@ -4,11 +4,13 @@ import {
 	MessageClientEvents,
 	MessageServerEvents,
 } from "../modules/message/types/message.contracts";
+import { UserClientEvents } from "../modules/user/types/user.types";
 
 // События, которые сервер может отправлять клиенту
 export type AppServerEvents = MessageServerEvents;
 // События, которые клиент может отправлять серверу
-export type AppClientEvents = ChatClientEvents & MessageClientEvents;
+export interface AppClientEvents
+	extends ChatClientEvents, MessageClientEvents, UserClientEvents {}
 
 export interface AuthenticatedSocket {
 	userId: number;
@@ -58,6 +60,7 @@ export interface SocketManagerContract {
 			ack?: EventAcknowledgement<K>,
 		) => void,
 	): void;
+	ioServer: ServerSocket;
 }
 
 export interface SocketController {

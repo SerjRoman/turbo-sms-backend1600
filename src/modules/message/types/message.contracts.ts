@@ -9,9 +9,27 @@ import type {
 	PaginationParams,
 } from "../../../types/pagination.types";
 import { ClientSocket, SocketController } from "../../../socket/socket.types";
+import { Request, Response } from "express";
+import { AuthenticatedUser } from "../../../types/token.types";
 
 // CQRS - Command/Query Responsibility Segregation
 // DDD - Domain Driven Design
+
+// query - PaginationParams
+// route params - {chatId: number}
+
+export type MesageControllerContract = {
+	getAllMessagesByChat(
+		req: Request<
+			{ chatId: number },
+			PaginatedResponse<Message>,
+			object,
+			PaginationParams,
+			AuthenticatedUser
+		>,
+		res: Response<PaginatedResponse<Message>, AuthenticatedUser>,
+	): Promise<void>;
+};
 
 export type MessageServiceContract = {
 	getAllMessagesByChat(

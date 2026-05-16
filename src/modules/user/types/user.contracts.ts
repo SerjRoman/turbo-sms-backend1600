@@ -1,6 +1,8 @@
-import { Request, Response, NextFunction } from "express";
+import type { Request, Response, NextFunction } from "express";
 import type {
 	FindByUsernameDto,
+	GetOnlineUsersAcknowledgment,
+	GetOnlineUsersPayload,
 	LoginCredentials,
 	LoginDto,
 	MeDTO,
@@ -10,7 +12,12 @@ import type {
 	UserCreateInput,
 	UserWithPassword,
 } from "./user.types";
-import { AuthenticatedUser } from "../../../types/token.types";
+import type { AuthenticatedUser } from "../../../types/token.types";
+import type {
+	ClientSocket,
+	ServerSocket,
+	SocketController,
+} from "../../../socket/socket.types";
 
 export interface UserServiceContract {
 	login: (dto: LoginDto) => Promise<{ token: string }>;
@@ -55,4 +62,14 @@ export interface UserControllerContract {
 		res: Response<User, AuthenticatedUser>,
 		next: NextFunction,
 	) => void;
+}
+
+export interface UserSocketControllerContract extends SocketController {
+	getOnlineUsers: (
+		ioServer: ServerSocket,
+		socket: ClientSocket,
+		payload: GetOnlineUsersPayload,
+		ack?: GetOnlineUsersAcknowledgment,
+	) => void;
+	isUserOnline: (ioServer: ServerSocket, id: number) => boolean;
 }

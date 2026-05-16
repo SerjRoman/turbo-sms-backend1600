@@ -33,6 +33,9 @@ app.use(errorHandlerMiddleware);
 socketManager.initConnection((socket) => {
 	socket.join("user:" + socket.data.userId);
 	console.log(`User ${socket.data.userId} connected to WebSocket`);
+	socket.on("disconnect", () => {
+		socket.leave("user:" + socket.data.userId);
+	});
 });
 
 httpServer.listen(env.PORT, env.HOST, () => {
