@@ -39,7 +39,7 @@ export type EventAcknowledgement<K extends EventName> = Parameters<
 	AppClientEvents[K]
 >[1];
 export interface Event<K extends EventName> {
-	name: string;
+	name: K;
 	callback: (
 		socket: ClientSocket,
 		payload: EventPayload<K>,

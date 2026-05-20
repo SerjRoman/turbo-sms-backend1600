@@ -1,7 +1,7 @@
 import { ConflictError } from "../../errors/app.errors";
 import { PrismaClient } from "../../prisma/client";
 import { ContactRepositoryContract } from "./types/contact.contracts";
-import { CreateContact } from "./types/contact.types";
+import { Contact, CreateContact } from "./types/contact.types";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 
 export const ContactRepository: ContactRepositoryContract = {
@@ -63,5 +63,18 @@ export const ContactRepository: ContactRepositoryContract = {
 			}
 			throw error;
 		}
+	},
+	findByUsers: function (
+		contactOwnerId: number,
+		contactUserId: number,
+	): Promise<Contact | null> {
+		return PrismaClient.contact.findUnique({
+			where: {
+				contactOwnerId_contactUserId: {
+					contactOwnerId: contactOwnerId,
+					contactUserId: contactUserId,
+				},
+			},
+		});
 	},
 };

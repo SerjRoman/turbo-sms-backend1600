@@ -7,6 +7,7 @@ export interface ContactRepositoryContract {
     findById(id: number): Promise<Contact | null>;
     findUserByName(name: string): Promise<User | null>;
     create(data: CreateContact): Promise<Contact>;
+    findByUsers(contactOwnerId: number, contactUserId: number): Promise<Contact | null>;
 }
 
 export interface ContactsControllerContract {

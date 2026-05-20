@@ -7,7 +7,7 @@ model Message {
   updatedAt  DateTime @updatedAt
   chat       Chat     @relation(fields: [chatId], references: [id], name: "mainChat")
   chatId     Int
-  lastChat   Chat     @relation(fields: [lastChatId], references: [id], name: "messageLast")
+  lastChat   Chat     @relation(fields: [lastChatId], references: [id], name: "lastMessage")
   lastChatId Int      @unique
   sender     User     @relation(fields: [senderId], references: [id])
   senderId   Int

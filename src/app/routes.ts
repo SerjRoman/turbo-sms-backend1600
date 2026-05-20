@@ -5,11 +5,13 @@ import {
 } from "../middlewares/upload.middleware";
 import { UserRoutes } from "../modules/user/user.routes";
 import { ContactRouter } from "../modules/contact/contact.routes";
+import { ChatRouter } from "../modules/chat/chat.routes";
 
 export const appRoutes = Router();
 
 appRoutes.use("/users/", UserRoutes);
 appRoutes.use("/contacts/", ContactRouter)
+appRoutes.use("/chats/", ChatRouter)
 
 
 appRoutes.get("/health", (req, res) => {

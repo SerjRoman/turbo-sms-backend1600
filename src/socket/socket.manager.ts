@@ -27,9 +27,15 @@ export class SocketManager implements SocketManagerContract {
 			console.log("New client connected: ", socket.id);
 			callback?.(socket);
 			this.events.forEach((event) => {
-				socket.on(event.name as EventName, (data, ack) => {
-					event.callback(socket, data, ack);
-				});
+				socket.on(
+					event.name,
+					(
+						data: EventPayload<EventName>,
+						ack?: EventAcknowledgement<EventName>,
+					) => {
+						event.callback(socket, data, ack);
+					},
+				);
 			});
 			socket.on("disconnect", () => {
 				console.log("Client disconnected: ", socket.id);

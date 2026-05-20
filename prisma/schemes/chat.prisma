@@ -3,7 +3,7 @@ model Chat {
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
   messages     Message[]         @relation(name: "mainChat")
-  messageLast  Message?          @relation(name: "messageLast")
+  lastMessage  Message?          @relation(name: "lastMessage")
   participants ChatParticipant[]
 }
 
