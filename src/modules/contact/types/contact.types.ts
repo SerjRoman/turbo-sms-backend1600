@@ -4,7 +4,7 @@ export type Contact = Prisma.ContactGetPayload<{}>;
 
 export interface CreateContact {
 	localName: string;
-	avatar: string | undefined;
+	avatar: string | undefined | null;
 	contactOwnerId: number;
 	contactUserId: number;
 }

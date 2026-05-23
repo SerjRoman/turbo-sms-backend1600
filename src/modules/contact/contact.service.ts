@@ -39,7 +39,7 @@ export const ContactService: ContactsServiceContract = {
 			localName,
 			contactUserId,
 			contactOwnerId: ownerId,
-			avatar: avatar ?? userExists.avatar ?? undefined,
+			avatar: avatar || userExists.avatar,
 		};
 
 		const contact = await ContactRepository.create(data);

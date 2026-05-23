@@ -42,18 +42,11 @@ export const ContactController: ContactsControllerContract = {
 	async create(req, res, next) {
 		try {
 			const ownerId = +res.locals.userId;
-
-			const validated = await createContactSchema.validate(req.body, {
-				abortEarly: false,
-				stripUnknown: true,
-			});
-
-			const { localName, contactUserId } = validated;
-
 			const contact = await ContactService.create(
-				localName,
-				+contactUserId,
+				req.body.localName,
+				+req.body.contactUserId,
 				ownerId,
+				req.file?.filename,
 			);
 			res.status(201).json(contact);
 		} catch (error) {

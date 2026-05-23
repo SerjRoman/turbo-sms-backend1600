@@ -41,7 +41,7 @@ export type ChatWithParticipantInfo = Prisma.ChatGetPayload<{
 						id: true;
 						name: true;
 						surname: true;
-						avatarUrl: true;
+						avatar: true;
 						contactsOf: {
 							select: {
 								id: true;
