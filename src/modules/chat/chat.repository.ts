@@ -48,7 +48,7 @@ export const ChatRepository: ChatRepositoryContract = {
 								id: true,
 								name: true,
 								surname: true,
-								avatarUrl: true,
+								avatar: true,
 								contactsOf: {
 									where: {
 										contactOwnerId: ownerId,

@@ -6,13 +6,14 @@ import {
 import { UserRoutes } from "../modules/user/user.routes";
 import { ContactRouter } from "../modules/contact/contact.routes";
 import { ChatRouter } from "../modules/chat/chat.routes";
+import { MessageRoutes } from "../modules/message/message.routes";
 
 export const appRoutes = Router();
 
 appRoutes.use("/users/", UserRoutes);
-appRoutes.use("/contacts/", ContactRouter)
-appRoutes.use("/chats/", ChatRouter)
-
+appRoutes.use("/contacts/", ContactRouter);
+appRoutes.use("/chats/", ChatRouter);
+appRoutes.use("/messages/", MessageRoutes);
 
 appRoutes.get("/health", (req, res) => {
 	res.json({

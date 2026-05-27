@@ -9,7 +9,7 @@ import type {
 	PaginationParams,
 } from "../../../types/pagination.types";
 import { ClientSocket, SocketController } from "../../../socket/socket.types";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { AuthenticatedUser } from "../../../types/token.types";
 
 // CQRS - Command/Query Responsibility Segregation
@@ -28,6 +28,7 @@ export type MesageControllerContract = {
 			AuthenticatedUser
 		>,
 		res: Response<PaginatedResponse<Message>, AuthenticatedUser>,
+		next: NextFunction,
 	): Promise<void>;
 };
 

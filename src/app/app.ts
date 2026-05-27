@@ -9,6 +9,7 @@ import { uploadDir } from "../config/path";
 import { createServer } from "node:http";
 import { SocketManager } from "../socket";
 import { ChatSocketController } from "../modules/chat/chat.socket.controller";
+import { UserSocketController } from "../modules/user/user.socket.controller";
 
 const app = express();
 
@@ -20,6 +21,7 @@ socketManager.useMiddleware(authenticateSocketMiddleware);
 // DI - Dependency Injection
 // DIP - Dependency Inversion Principle
 ChatSocketController.registerHandlers(socketManager);
+UserSocketController.registerHandlers(socketManager);
 
 app.use(cors());
 app.use(express.json());
