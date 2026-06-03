@@ -12,14 +12,15 @@ export const MessageService: MessageServiceContract = {
 		return messages;
 	},
 	async sendMessage(dto) {
-		if (await ChatService.isUserInChat(dto.senderId, dto.chatId)) {
+		console.log(dto);
+		if (!(await ChatService.isUserInChat(dto.senderId, dto.chatId))) {
 			throw new BadRequestError(
 				"You are not allowed to send messages not in your chat",
 			);
 		}
 		const message = await MessageRepository.createMessage({
 			...dto,
-			lastChatId: dto.chatId,
+			chatAsLastMessageId: dto.chatId,
 		});
 		return message;
 	},

@@ -10,6 +10,7 @@ import { createServer } from "node:http";
 import { SocketManager } from "../socket";
 import { ChatSocketController } from "../modules/chat/chat.socket.controller";
 import { UserSocketController } from "../modules/user/user.socket.controller";
+import { MessageSocketController } from "../modules/message/message.socket.controller";
 
 const app = express();
 
@@ -22,6 +23,7 @@ socketManager.useMiddleware(authenticateSocketMiddleware);
 // DIP - Dependency Inversion Principle
 ChatSocketController.registerHandlers(socketManager);
 UserSocketController.registerHandlers(socketManager);
+MessageSocketController.registerHandlers(socketManager);
 
 app.use(cors());
 app.use(express.json());

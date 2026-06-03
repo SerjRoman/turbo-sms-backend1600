@@ -8,8 +8,12 @@ import type {
 	PaginatedResponse,
 	PaginationParams,
 } from "../../../types/pagination.types";
-import { ClientSocket, SocketController } from "../../../socket/socket.types";
-import { NextFunction, Request, Response } from "express";
+import {
+	ClientSocket,
+	ServerSocket,
+	SocketController,
+} from "../../../socket/socket.types";
+import type { NextFunction, Request, Response } from "express";
 import { AuthenticatedUser } from "../../../types/token.types";
 
 // CQRS - Command/Query Responsibility Segregation
@@ -21,7 +25,7 @@ import { AuthenticatedUser } from "../../../types/token.types";
 export type MesageControllerContract = {
 	getAllMessagesByChat(
 		req: Request<
-			{ chatId: number },
+			{ chatId: string },
 			PaginatedResponse<Message>,
 			object,
 			PaginationParams,
@@ -30,6 +34,20 @@ export type MesageControllerContract = {
 		res: Response<PaginatedResponse<Message>, AuthenticatedUser>,
 		next: NextFunction,
 	): Promise<void>;
+	uploadMessageMedia(
+		req: Request<
+			object,
+			{ media: string } | { message: string },
+			object,
+			object,
+			AuthenticatedUser
+		>,
+		res: Response<
+			{ media: string } | { message: string },
+			AuthenticatedUser
+		>,
+		next: NextFunction,
+	): void;
 };
 
 export type MessageServiceContract = {
@@ -56,6 +74,14 @@ export interface MessageServerEvents {
 }
 
 export interface MessageSocketControllerContact extends SocketController {
-	sendMessage: (socket: ClientSocket, payload: SendMessagePayload) => void;
-	newChatMessage: (socket: ClientSocket, payload: Message) => void;
+	sendMessage: (
+		ioServer: ServerSocket,
+		socket: ClientSocket,
+		payload: SendMessagePayload,
+	) => void;
+	newChatMessage: (
+		ioServer: ServerSocket,
+		socket: ClientSocket,
+		payload: Message,
+	) => void;
 }

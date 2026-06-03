@@ -16,6 +16,9 @@ export const MessageRepository: MessageRepositoryContract = {
 				skip: page * take,
 				take,
 				where: { chatId },
+				orderBy: {
+					createdAt: "desc",
+				},
 			}),
 			meta: {
 				page,
@@ -34,7 +37,11 @@ export const MessageRepository: MessageRepositoryContract = {
 					id: data.chatId,
 				},
 				data: {
-					messageLastId: message.id,
+					lastMessage: {
+						connect: {
+							id: message.id,
+						},
+					},
 				},
 			});
 			return message;

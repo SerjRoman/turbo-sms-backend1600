@@ -1,10 +1,11 @@
 model Chat {
-  id           Int               @id @default(autoincrement())
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
-  messages     Message[]         @relation(name: "mainChat")
-  lastMessage  Message?          @relation(name: "lastMessage")
-  participants ChatParticipant[]
+  id            Int               @id @default(autoincrement())
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  messages      Message[]         @relation(name: "mainChat")
+  lastMessage   Message?          @relation(name: "lastMessage", fields: [lastMessageId], references: [id])
+  lastMessageId Int?              @unique
+  participants  ChatParticipant[]
 }
 
 //  messages Message[]

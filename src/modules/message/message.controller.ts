@@ -12,14 +12,8 @@ import { getAllMessageSchema } from "./message.schema";
 
 export const MessageController: MesageControllerContract = {
 	getAllMessagesByChat: async function (
-		req: Request<
-			{ chatId: number },
-			PaginatedResponse<Message>,
-			object,
-			PaginationParams,
-			AuthenticatedUser
-		>,
-		res: Response<PaginatedResponse<Message>, AuthenticatedUser>,
+		req,
+		res,
 		next: NextFunction,
 	): Promise<void> {
 		try {
@@ -32,6 +26,18 @@ export const MessageController: MesageControllerContract = {
 					pagination,
 				),
 			);
+		} catch (error) {
+			next(error);
+		}
+	},
+	async uploadMessageMedia(req, res, next) {
+		try {
+			const file = req.file;
+			if (!file?.filename) {
+				res.status(404).json({ message: "File is not found!" });
+				return;
+			}
+			res.status(200).json({ media: file.filename });
 		} catch (error) {
 			next(error);
 		}
