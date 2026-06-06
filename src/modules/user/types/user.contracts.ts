@@ -3,11 +3,14 @@ import type {
 	FindByUsernameDto,
 	GetOnlineUsersAcknowledgment,
 	GetOnlineUsersPayload,
+	GetUserStatusAcknowledgment,
 	LoginCredentials,
 	LoginDto,
 	MeDTO,
 	RegisterCredentials,
 	RegisterDto,
+	SubscribeAndGetInitialStatusesAcknowledgment,
+	SubscribeAndGetInitialStatusesPayload,
 	User,
 	UserCreateInput,
 	UserWithPassword,
@@ -24,6 +27,7 @@ export interface UserServiceContract {
 	register: (dto: RegisterDto) => Promise<{ token: string }>;
 	me: (dto: MeDTO) => Promise<User>;
 	findByUsername: (dto: FindByUsernameDto) => Promise<User>;
+	updateLastSeenAt: (userId: number) => Promise<User>;
 }
 export interface UserRepositoryContract {
 	findByEmailWithPassword: (
@@ -33,6 +37,7 @@ export interface UserRepositoryContract {
 	create: (data: UserCreateInput) => Promise<User>;
 	findById: (id: number) => Promise<User>;
 	findByUsername: (username: string) => Promise<User | null>;
+	updateLastSeenAt: (userId: number) => Promise<User>;
 }
 
 export interface UserControllerContract {
@@ -65,6 +70,7 @@ export interface UserControllerContract {
 }
 
 export interface UserSocketControllerContract extends SocketController {
+	subscriptionsMap: Map<number, Set<number>>;
 	getOnlineUsers: (
 		ioServer: ServerSocket,
 		socket: ClientSocket,
@@ -72,4 +78,23 @@ export interface UserSocketControllerContract extends SocketController {
 		ack?: GetOnlineUsersAcknowledgment,
 	) => void;
 	isUserOnline: (ioServer: ServerSocket, id: number) => boolean;
+	subscribeAndGetInitialStatuses: (
+		ioServer: ServerSocket,
+		socket: ClientSocket,
+		payload: SubscribeAndGetInitialStatusesPayload,
+		ack?: SubscribeAndGetInitialStatusesAcknowledgment,
+	) => void;
+	notifySubscribedUsers: (
+		ioServer: ServerSocket,
+		userId: number,
+		status: "online" | "offline",
+	) => void;
+	getUserStatus: (
+		ioServer: ServerSocket,
+		userId: number,
+		ack?: GetUserStatusAcknowledgment,
+	) => void;
+	updateLastSeenAt: (
+		userId: number
+	) => void;
 }

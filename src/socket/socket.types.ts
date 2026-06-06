@@ -4,10 +4,14 @@ import {
 	MessageClientEvents,
 	MessageServerEvents,
 } from "../modules/message/types/message.contracts";
-import { UserClientEvents } from "../modules/user/types/user.types";
+import {
+	UserClientEvents,
+	UserServerEvents,
+} from "../modules/user/types/user.types";
 
 // События, которые сервер может отправлять клиенту
-export type AppServerEvents = MessageServerEvents;
+export interface AppServerEvents
+	extends MessageServerEvents, UserServerEvents {}
 // События, которые клиент может отправлять серверу
 export interface AppClientEvents
 	extends ChatClientEvents, MessageClientEvents, UserClientEvents {}

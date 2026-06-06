@@ -6,7 +6,11 @@ import type {
 } from "./types/user.types";
 import { PrismaClient } from "../../prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
-import { ValidationError, InternalServerError, NotFoundError } from "../../errors/app.errors";
+import {
+	ValidationError,
+	InternalServerError,
+	NotFoundError,
+} from "../../errors/app.errors";
 
 export const UserRepository: UserRepositoryContract = {
 	async findByEmailWithPassword(
@@ -105,7 +109,11 @@ export const UserRepository: UserRepositoryContract = {
 				if (error.code === "P2025") {
 					throw new NotFoundError("User not found");
 				}
-				if (["P2000", "P2005", "P2006", "P2007", "P2009"].includes(error.code)) {
+				if (
+					["P2000", "P2005", "P2006", "P2007", "P2009"].includes(
+						error.code,
+					)
+				) {
 					console.log("Wrong query passed by user.");
 					throw new ValidationError("WRONG_QUERY");
 				}
@@ -123,6 +131,33 @@ export const UserRepository: UserRepositoryContract = {
 			return await PrismaClient.user.findUnique({
 				where: { username },
 				omit: { password: true },
+			});
+		} catch (error) {
+			console.log(error);
+			if (error instanceof PrismaClientKnownRequestError) {
+				if (
+					["P2000", "P2005", "P2006", "P2007", "P2009"].includes(
+						error.code,
+					)
+				) {
+					throw new ValidationError("WRONG_QUERY");
+				}
+				if (error.code === "P2022") {
+					throw new InternalServerError("WRONG_DATABASE");
+				}
+			}
+			throw new InternalServerError("UNHANDLED_DB_EXCEPTION");
+		}
+	},
+	async updateLastSeenAt(userId) {
+		try {
+			return await PrismaClient.user.update({
+				where: {
+					id: userId,
+				},
+				data: {
+					lastSeenAt: new Date(),
+				},
 			});
 		} catch (error) {
 			console.log(error);

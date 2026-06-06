@@ -28,15 +28,43 @@ export type LoginDto = {
 export type LoginCredentials = InferType<typeof loginSchema>;
 export type RegisterCredentials = InferType<typeof regSchema>;
 export type FindByUsernameDto = { username: string };
-
+export type UserStatus = {
+	userId: number;
+	status: "online" | "offline";
+};
 export type GetOnlineUsersPayload = {
 	userIds: number[];
 };
-export type GetOnlineUsersAcknowledgment = (response: { userIds: number[] }) => void;
+export type SubscribeAndGetInitialStatusesPayload = {
+	userIds: number[];
+};
+export type GetOnlineUsersAcknowledgment = (response: {
+	userIds: number[];
+}) => void;
+export type SubscribeAndGetInitialStatusesAcknowledgment = (response: {
+	statuses: UserStatus[];
+}) => void;
 
 export interface UserClientEvents {
 	getOnlineUsers: (
 		payload: GetOnlineUsersPayload,
 		ack?: GetOnlineUsersAcknowledgment,
 	) => void;
+	subscribeAndGetInitialStatuses: (
+		payload: SubscribeAndGetInitialStatusesPayload,
+		ack?: SubscribeAndGetInitialStatusesAcknowledgment,
+	) => void;
+	getUserStatus: (
+		payload: GetUserStatusPayload,
+		ack?: GetUserStatusAcknowledgment,
+	) => void;
 }
+export interface UserServerEvents {
+	userStatusUpdated: (status: UserStatus) => void;
+}
+export interface GetUserStatusPayload {
+    userId: number;
+}
+export type GetUserStatusAcknowledgment = (response: {
+	status: UserStatus;
+}) => void;

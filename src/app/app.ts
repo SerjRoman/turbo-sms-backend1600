@@ -37,8 +37,19 @@ app.use(errorHandlerMiddleware);
 socketManager.initConnection((socket) => {
 	socket.join("user:" + socket.data.userId);
 	console.log(`User ${socket.data.userId} connected to WebSocket`);
+	UserSocketController.notifySubscribedUsers(
+		socketManager.ioServer,
+		socket.data.userId,
+		"online",
+	);
 	socket.on("disconnect", () => {
 		socket.leave("user:" + socket.data.userId);
+		UserSocketController.notifySubscribedUsers(
+			socketManager.ioServer,
+			socket.data.userId,
+			"offline",
+		);
+		UserSocketController.updateLastSeenAt(socket.data.userId);
 	});
 });
 
