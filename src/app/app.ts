@@ -11,6 +11,7 @@ import { SocketManager } from "../socket";
 import { ChatSocketController } from "../modules/chat/chat.socket.controller";
 import { UserSocketController } from "../modules/user/user.socket.controller";
 import { MessageSocketController } from "../modules/message/message.socket.controller";
+import { USER_ROOM_PREFIX } from "../modules/user/user.constants";
 
 const app = express();
 
@@ -35,7 +36,7 @@ app.use(appRoutes);
 app.use(errorHandlerMiddleware);
 
 socketManager.initConnection((socket) => {
-	socket.join("user:" + socket.data.userId);
+	socket.join(USER_ROOM_PREFIX + socket.data.userId);
 	console.log(`User ${socket.data.userId} connected to WebSocket`);
 	UserSocketController.notifySubscribedUsers(
 		socketManager.ioServer,
@@ -43,7 +44,7 @@ socketManager.initConnection((socket) => {
 		"online",
 	);
 	socket.on("disconnect", () => {
-		socket.leave("user:" + socket.data.userId);
+		socket.leave(USER_ROOM_PREFIX + socket.data.userId);
 		UserSocketController.notifySubscribedUsers(
 			socketManager.ioServer,
 			socket.data.userId,

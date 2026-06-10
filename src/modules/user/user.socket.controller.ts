@@ -12,6 +12,7 @@ import {
 	UserStatus,
 	GetUserStatusAcknowledgment,
 } from "./types/user.types";
+import { USER_ROOM_PREFIX } from "./user.constants";
 import { UserService } from "./user.service";
 
 export const UserSocketController: UserSocketControllerContract = {
@@ -32,7 +33,7 @@ export const UserSocketController: UserSocketControllerContract = {
 		}
 	},
 	isUserOnline: function (ioServer: ServerSocket, id: number): boolean {
-		return ioServer.sockets.adapter.rooms.has(`user:${id}`);
+		return ioServer.sockets.adapter.rooms.has(`${USER_ROOM_PREFIX}${id}`);
 	},
 	registerHandlers: function (socketManager: SocketManagerContract): void {
 		socketManager.addEvent("getOnlineUsers", (socket, payload, ack) => {
@@ -82,12 +83,12 @@ export const UserSocketController: UserSocketControllerContract = {
 		status: "online" | "offline",
 	): void {
 		const subscribers = this.subscriptionsMap.get(userId);
-        console.log(subscribers)
+		console.log(subscribers);
 		if (!subscribers) {
 			return;
 		}
 		for (const subscriberId of subscribers) {
-			const userRoom = `user:${subscriberId}`;
+			const userRoom = `${USER_ROOM_PREFIX}${subscriberId}`;
 			ioServer.to(userRoom).emit("userStatusUpdated", {
 				userId,
 				status,

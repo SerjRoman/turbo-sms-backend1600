@@ -1,5 +1,8 @@
 import type { Socket, Server as SocketIOServer } from "socket.io";
-import type { ChatClientEvents } from "../modules/chat/types/chat.types";
+import type {
+	ChatClientEvents,
+	ChatServerEvents,
+} from "../modules/chat/types/chat.types";
 import {
 	MessageClientEvents,
 	MessageServerEvents,
@@ -11,7 +14,7 @@ import {
 
 // События, которые сервер может отправлять клиенту
 export interface AppServerEvents
-	extends MessageServerEvents, UserServerEvents {}
+	extends MessageServerEvents, UserServerEvents, ChatServerEvents {}
 // События, которые клиент может отправлять серверу
 export interface AppClientEvents
 	extends ChatClientEvents, MessageClientEvents, UserClientEvents {}

@@ -1,11 +1,6 @@
 import { ChatRepositoryContract } from "./types/chat.contracts";
 import { PrismaClient } from "../../prisma/client";
-import {
-	Chat,
-	ChatWithParticipantInfo,
-	ChatWithParticipants,
-	CreateChat,
-} from "./types/chat.types";
+import { Chat, ChatWithParticipantInfo, CreateChat } from "./types/chat.types";
 
 export const ChatRepository: ChatRepositoryContract = {
 	getChatParticipant: function (userId: number, chatId: number) {
@@ -100,6 +95,41 @@ export const ChatRepository: ChatRepositoryContract = {
 							{ userId: data.ownerId },
 							{ userId: data.contactUserId },
 						],
+					},
+				},
+			},
+		});
+	},
+	getChatWithParticipantInfo: function (
+		chatId: number,
+		ownerId: number,
+	): Promise<ChatWithParticipantInfo | null> {
+		return PrismaClient.chat.findUnique({
+			where: {
+				id: chatId,
+			},
+			include: {
+				lastMessage: true,
+				participants: {
+					include: {
+						user: {
+							select: {
+								id: true,
+								name: true,
+								surname: true,
+								avatar: true,
+								contactsOf: {
+									where: {
+										contactOwnerId: ownerId,
+									},
+									select: {
+										id: true,
+										localName: true,
+										avatar: true,
+									},
+								},
+							},
+						},
 					},
 				},
 			},

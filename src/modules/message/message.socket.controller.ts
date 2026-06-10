@@ -1,11 +1,12 @@
-import {
+import type {
 	ClientSocket,
 	ServerSocket,
 	SocketManagerContract,
 } from "../../socket/socket.types";
+import { ChatSocketController } from "../chat/chat.socket.controller";
 import { MessageService } from "./message.service";
-import { MessageSocketControllerContact } from "./types/message.contracts";
-import { SendMessagePayload, Message } from "./types/message.types";
+import type { MessageSocketControllerContact } from "./types/message.contracts";
+import type { SendMessagePayload, Message } from "./types/message.types";
 
 export const MessageSocketController: MessageSocketControllerContact = {
 	sendMessage: async function (
@@ -19,6 +20,9 @@ export const MessageSocketController: MessageSocketControllerContact = {
 				senderId: socket.data.userId,
 			});
 			this.newChatMessage(ioServer, socket, message);
+			ChatSocketController.chatUpdate(ioServer, socket, {
+				chatId: message.chatId,
+			});
 		} catch (error) {
 			console.error(error);
 		}

@@ -1,11 +1,13 @@
 import type { NextFunction, Request, Response } from "express";
 import type {
 	ClientSocket,
+	ServerSocket,
 	SocketController,
 } from "../../../socket/socket.types";
 import type {
 	Chat,
 	ChatParticipant,
+	ChatUpdatePayload,
 	ChatWithParticipantInfo,
 	ChatWithParticipants,
 	CreateChat,
@@ -14,7 +16,7 @@ import type {
 	JoinChatPayload,
 	LeaveChatPayload,
 } from "./chat.types";
-import { AuthenticatedUser } from "../../../types/token.types";
+import type { AuthenticatedUser } from "../../../types/token.types";
 
 export interface ChatSocketControllerContract extends SocketController {
 	joinChat: (
@@ -23,6 +25,11 @@ export interface ChatSocketControllerContract extends SocketController {
 		ack?: JoinChatCallback,
 	) => void;
 	leaveChat: (socket: ClientSocket, payload: LeaveChatPayload) => void;
+	chatUpdate: (
+		ioServer: ServerSocket,
+		socket: ClientSocket,
+		payload: ChatUpdatePayload,
+	) => void;
 }
 
 export interface ChatServiceContract {
@@ -30,6 +37,10 @@ export interface ChatServiceContract {
 	getChatWithParticipants: (chatId: number) => Promise<ChatWithParticipants>;
 	getMyChats(ownerId: number): Promise<ChatWithParticipantInfo[]>;
 	create: (dto: CreateChatDto) => Promise<Chat>;
+	getMyChat: (
+		chatId: number,
+		ownerId: number,
+	) => Promise<ChatWithParticipantInfo | null>;
 }
 export interface ChatRepositoryContract {
 	getChatParticipant: (
@@ -42,6 +53,10 @@ export interface ChatRepositoryContract {
 	getChatsWithParticipantInfo: (
 		ownerId: number,
 	) => Promise<ChatWithParticipantInfo[]>;
+	getChatWithParticipantInfo: (
+		chatId: number,
+		ownerId: number,
+	) => Promise<ChatWithParticipantInfo | null>;
 	getChatByParticipants: (
 		userId1: number,
 		userId2: number,
@@ -50,11 +65,6 @@ export interface ChatRepositoryContract {
 }
 
 export interface ChatControllerContract {
-	// getChatParticipant: (
-	// 	req: Request<>,
-	// 	res: Response<>,
-	// 	next: NextFunction
-	// )
 	create: (
 		req: Request<
 			object,
@@ -78,5 +88,3 @@ export interface ChatControllerContract {
 		next: NextFunction,
 	) => Promise<void>;
 }
-
-// create: {contactUserId: number}

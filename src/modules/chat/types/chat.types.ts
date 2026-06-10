@@ -19,6 +19,9 @@ export interface ChatClientEvents {
 	joinChat: (payload: JoinChatPayload, ack?: JoinChatCallback) => void;
 	leaveChat: (payload: LeaveChatPayload) => void;
 }
+export interface ChatServerEvents {
+	chatUpdate: (payload: ChatWithLastMessage) => void;
+}
 export type ChatWithParticipants = Prisma.ChatGetPayload<{
 	include: {
 		participants: true;
@@ -55,5 +58,10 @@ export type ChatWithParticipantInfo = Prisma.ChatGetPayload<{
 		};
 	};
 }>;
-
+export type ChatWithLastMessage = Prisma.ChatGetPayload<{
+	include: { lastMessage: true };
+}>;
 export type CreateChatDto = { ownerId: number; contactUserId: number };
+export interface ChatUpdatePayload {
+	chatId: number;
+}
