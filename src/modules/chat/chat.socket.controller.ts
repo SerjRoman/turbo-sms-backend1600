@@ -55,29 +55,16 @@ export const ChatSocketController: ChatSocketControllerContract = {
 		socket: ClientSocket,
 		payload: ChatUpdatePayload,
 	): Promise<void> {
-		const chat = await ChatService.getMyChat(
-			payload.chatId,
-			socket.data.userId,
-		);
+		const chat = await ChatService.getMyChat(payload.chatId);
 		if (!chat) {
 			return;
 		}
-		const usersToSendNotification = chat.participants.filter(
-			(participant) => participant.userId !== socket.data.userId,
-		);
-		const { participants: _, ...restChat } = chat;
-		for (const user of usersToSendNotification) {
+		for (const user of chat.participants) {
 			const roomName = `${USER_ROOM_PREFIX}${user.userId}`;
 			const hasRoom = ioServer.sockets.adapter.rooms.has(roomName);
 			if (hasRoom) {
-				ioServer.to(roomName).emit("chatUpdate", restChat);
+				ioServer.to(roomName).emit("chatUpdate", chat);
 			}
-		}
-		const senderRoomName = `${USER_ROOM_PREFIX}${socket.data.userId}`;
-		const senderHasRoom =
-			ioServer.sockets.adapter.rooms.has(senderRoomName);
-		if (senderHasRoom) {
-			ioServer.to(senderRoomName).emit("chatUpdate", restChat);
 		}
 	},
 };

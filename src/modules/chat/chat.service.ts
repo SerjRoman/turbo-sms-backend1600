@@ -2,11 +2,7 @@ import { ConflictError, NotFoundError } from "../../errors/app.errors";
 import { ContactRepository } from "../contact/contact.repository";
 import { ChatRepository } from "./chat.repository";
 import { ChatServiceContract } from "./types/chat.contracts";
-import {
-	ChatWithParticipantInfo,
-	CreateChatDto,
-	Chat,
-} from "./types/chat.types";
+import { ChatWithUsertInfo, CreateChatDto, Chat } from "./types/chat.types";
 
 export const ChatService: ChatServiceContract = {
 	async isUserInChat(userId, chatId) {
@@ -21,7 +17,7 @@ export const ChatService: ChatServiceContract = {
 		if (!chat) throw new NotFoundError("Chat");
 		return chat;
 	},
-	getMyChats: function (ownerId: number): Promise<ChatWithParticipantInfo[]> {
+	getMyChats: function (ownerId: number): Promise<ChatWithUsertInfo[]> {
 		return ChatRepository.getChatsWithParticipantInfo(ownerId);
 	},
 	create: async function (dto: CreateChatDto): Promise<Chat> {
@@ -45,8 +41,7 @@ export const ChatService: ChatServiceContract = {
 	},
 	getMyChat: function (
 		chatId: number,
-		ownerId: number,
-	): Promise<ChatWithParticipantInfo | null> {
-		return ChatRepository.getChatWithParticipantInfo(chatId, ownerId);
+	): Promise<ChatWithUsertInfo | null> {
+		return ChatRepository.getChatWithParticipantInfo(chatId);
 	},
 };

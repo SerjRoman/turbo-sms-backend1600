@@ -8,13 +8,14 @@ import type {
 	Chat,
 	ChatParticipant,
 	ChatUpdatePayload,
-	ChatWithParticipantInfo,
+	ChatWithUsertInfo,
 	ChatWithParticipants,
 	CreateChat,
 	CreateChatDto,
 	JoinChatCallback,
 	JoinChatPayload,
 	LeaveChatPayload,
+	ChatWithParticipantInfo,
 } from "./chat.types";
 import type { AuthenticatedUser } from "../../../types/token.types";
 
@@ -35,12 +36,9 @@ export interface ChatSocketControllerContract extends SocketController {
 export interface ChatServiceContract {
 	isUserInChat: (userId: number, chatId: number) => Promise<boolean>;
 	getChatWithParticipants: (chatId: number) => Promise<ChatWithParticipants>;
-	getMyChats(ownerId: number): Promise<ChatWithParticipantInfo[]>;
+	getMyChats(ownerId: number): Promise<ChatWithUsertInfo[]>;
 	create: (dto: CreateChatDto) => Promise<Chat>;
-	getMyChat: (
-		chatId: number,
-		ownerId: number,
-	) => Promise<ChatWithParticipantInfo | null>;
+	getMyChat: (chatId: number) => Promise<ChatWithUsertInfo | null>;
 }
 export interface ChatRepositoryContract {
 	getChatParticipant: (
@@ -52,10 +50,9 @@ export interface ChatRepositoryContract {
 	) => Promise<ChatWithParticipants | null>;
 	getChatsWithParticipantInfo: (
 		ownerId: number,
-	) => Promise<ChatWithParticipantInfo[]>;
+	) => Promise<ChatWithUsertInfo[]>;
 	getChatWithParticipantInfo: (
 		chatId: number,
-		ownerId: number,
 	) => Promise<ChatWithParticipantInfo | null>;
 	getChatByParticipants: (
 		userId1: number,
@@ -79,12 +76,12 @@ export interface ChatControllerContract {
 	getMyChats: (
 		req: Request<
 			object,
-			ChatWithParticipantInfo[],
+			ChatWithUsertInfo[],
 			object,
 			object,
 			AuthenticatedUser
 		>,
-		res: Response<ChatWithParticipantInfo[], AuthenticatedUser>,
+		res: Response<ChatWithUsertInfo[], AuthenticatedUser>,
 		next: NextFunction,
 	) => Promise<void>;
 }

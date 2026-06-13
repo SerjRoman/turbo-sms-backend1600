@@ -20,7 +20,7 @@ export interface ChatClientEvents {
 	leaveChat: (payload: LeaveChatPayload) => void;
 }
 export interface ChatServerEvents {
-	chatUpdate: (payload: ChatWithLastMessage) => void;
+	chatUpdate: (payload: ChatWithParticipantInfo) => void;
 }
 export type ChatWithParticipants = Prisma.ChatGetPayload<{
 	include: {
@@ -34,7 +34,7 @@ export type ChatParticipant = Prisma.ChatParticipantGetPayload<{}>;
     Когда клиент отправляет событие на сервер, он может передать функцию обратного вызова в качестве аргумента. 
     Эта функция будет вызвана сервером после обработки события, и в нее можно передать данные или статус выполнения.
 */
-export type ChatWithParticipantInfo = Prisma.ChatGetPayload<{
+export type ChatWithUsertInfo = Prisma.ChatGetPayload<{
 	include: {
 		lastMessage: true;
 		participants: {
@@ -52,6 +52,23 @@ export type ChatWithParticipantInfo = Prisma.ChatGetPayload<{
 								avatar: true;
 							};
 						};
+					};
+				};
+			};
+		};
+	};
+}>;
+export type ChatWithParticipantInfo = Prisma.ChatGetPayload<{
+	include: {
+		lastMessage: true;
+		participants: {
+			include: {
+				user: {
+					select: {
+						id: true;
+						name: true;
+						surname: true;
+						avatar: true;
 					};
 				};
 			};
